@@ -43,7 +43,7 @@ class EWayPaymentController extends Controller implements NestedController {
 		//Allow for lax SSL (the library on the web server seems a bit iffy)
 		curl_setopt( $ch , CURLOPT_SSL_VERIFYPEER , false );
 		curl_setopt( $ch , CURLOPT_SSL_VERIFYHOST , false );
-
+		
 		$rawResponse = curl_exec($ch);
 		$response = simplexml_load_string($rawResponse);
 		
@@ -95,7 +95,8 @@ class EWayPaymentController extends Controller implements NestedController {
 				
 				$this->redirect($config->EWay_ReturnPage()->Link($config->EWay_ReturnAction));
 			} else {
-				$this->payment->delete();
+				$this->payment->Status = "Cancelled";
+				$this->payment->write();
 				$this->redirect($config->EWay_CancelPage()->Link($config->EWay_CancelAction));
 			}
 		} else {
